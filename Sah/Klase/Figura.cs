@@ -15,7 +15,7 @@ namespace Sah.Klase
         public string Boja { get; set; }
         public Polje Polje { get; set; }
         public string Oznaka { get; set; }
-
+        
         public Figura(string boja, Polje polje, string oznaka)
         {
             this.Boja = boja; 

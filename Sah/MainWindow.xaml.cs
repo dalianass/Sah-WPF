@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Sah.Klase;
 using Sah.Helper;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Sah
 {
@@ -52,13 +53,13 @@ namespace Sah
             tabla.matricaPolja[1, 1] = polje;
             tabla.matricaPolja[3, 3] = polje2;
             tabla.matricaPolja[3, 4] = polje3;
-            KreirajGridIPolja();
+            kreirajGridIPolja();
 
             ////polje3.figuraNaPolju = null;
 
         }
 
-        private void KreirajGridIPolja()
+        private void kreirajGridIPolja()
         {
             grid = new Grid();
             for (int i = 0; i < 10; i++)
@@ -69,7 +70,7 @@ namespace Sah
 
             Rectangle rectangle;
 
-            TextBlock tb;
+            TextBox tb;
             bool neparanRed = true;
 
             //dodavanje polja
@@ -88,12 +89,14 @@ namespace Sah
 
                         rectangle.MouseLeftButtonDown += Polje_MouseLeftButtonDown;
                         //OZNAKE POLJA
-                        tb = new TextBlock
+                        tb = new TextBox
                         {
                             Text = tabla.matricaPolja[row-1, col-1].tekstualniOpisPolja(),
                             HorizontalAlignment = HorizontalAlignment.Center,
                             VerticalAlignment = VerticalAlignment.Center,
-                            Foreground = Brushes.LightGray 
+                            Foreground = Brushes.LightGray ,
+                            Background = Brushes.Transparent,
+                            BorderBrush = Brushes.Transparent
                         };
 
                     } 
@@ -108,12 +111,14 @@ namespace Sah
                         rectangle.MouseDown += Polje_MouseLeftButtonDown;
 
                         //OZNAKE POLJA
-                        tb = new TextBlock
+                        tb = new TextBox
                         {
                             Text = tabla.matricaPolja[row - 1, col - 1].tekstualniOpisPolja(),
                             HorizontalAlignment = HorizontalAlignment.Center,
                             VerticalAlignment = VerticalAlignment.Center,
-                            Foreground = Brushes.LightGray 
+                            Foreground = Brushes.LightGray,
+                            Background = Brushes.Transparent,
+                            BorderBrush = Brushes.Transparent
                         };
                     }
 
@@ -193,25 +198,30 @@ namespace Sah
             elipsa.MouseLeftButtonDown += Ellipse_MouseLeftButtonDown;
 
 
-            Grid.SetRow(elipsa, figura.Polje.brojReda);
+            Grid.SetRow(elipsa, figura.Polje.brojReda+1);
             Grid.SetColumn(elipsa, SlovoUBroj.vrednostKolonePrekoSlova[figura.Polje.slovoKolone]+1); //kolona figure
             grid.Children.Add(elipsa);
 
-            Grid.SetRow(tb, figura.Polje.brojReda);
+            Grid.SetRow(tb, figura.Polje.brojReda+1);
             Grid.SetColumn(tb, SlovoUBroj.vrednostKolonePrekoSlova[figura.Polje.slovoKolone]+1); //kolona figure
             grid.Children.Add(tb);
         }
 
-        //private void Ellipse_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        //{
-        //    Ellipse kliknutaElipsa = (Ellipse)sender;
-        //    //MessageBox.Show($"You clicked an ellipse at row {Grid.GetRow(kliknutaElipsa)} and column {Grid.GetColumn(kliknutaElipsa)}");
-        //    //Polje poljeNaKomJeElipsa = (Polje)kliknutaElipsa.Tag;
-        //    //poljeNaKomJeElipsa.figuraNaPolju = null;
-        //    Grid.SetRow(kliknutaElipsa, 2);
-        //    Grid.SetColumn(kliknutaElipsa, 3);
+        private TextBlock nadjiTextBlock(Grid grid, int row, int column)
+        {
+            foreach (var child in grid.Children)
+            {
+                if (child is TextBlock textBlock && Grid.GetRow(textBlock) == row && Grid.GetColumn(textBlock) == column)
+                {
+                    // Pronađen je TextBlock sa zadatim koordinatama
+                    return textBlock;
+                }
+            }
 
-        //}
+            // TextBlock nije pronađen na zadatoj poziciji
+            return null;
+        }
+
         private void Ellipse_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             selektovanaElipsa = (Ellipse)sender;
@@ -224,13 +234,40 @@ namespace Sah
             Polje poljeNaKojeSePremesta= rectPolje.Tag as Polje;
 
             if(selektovanaElipsa != null) {
-                Grid.SetRow(selektovanaElipsa, poljeNaKojeSePremesta.brojReda+1);
-                Grid.SetColumn(selektovanaElipsa, SlovoUBroj.vrednostKolonePrekoSlova[poljeNaKojeSePremesta.slovoKolone]+1);
-
                 Polje poljeElipse = selektovanaElipsa.Tag as Polje;
+
+                TextBlock tekstNaElipsi = nadjiTextBlock(grid, poljeElipse.brojReda + 1, SlovoUBroj.vrednostKolonePrekoSlova[poljeElipse.slovoKolone] + 1);
+
+
+                Grid.SetRow(selektovanaElipsa, poljeNaKojeSePremesta.brojReda + 1);
+                Grid.SetColumn(selektovanaElipsa, SlovoUBroj.vrednostKolonePrekoSlova[poljeNaKojeSePremesta.slovoKolone] + 1);
+
+
+
+                //tekstNaElipsi.Foreground = Brushes.Black;
+                //tekstNaElipsi.FontWeight = FontWeights.Bold;
+                //tekstNaElipsi.VerticalAlignment = VerticalAlignment.Center;
+                //tekstNaElipsi.HorizontalAlignment = HorizontalAlignment.Center;
+                //Text = figura.FormatirajOznakuFigure(),
+
+                //MessageBox.Show(tekstNaElipsi.Text.ToString());
+
+                //***************************
+                //Grid.SetRow(tekstNaElipsi, 2);
+                //Grid.SetColumn(tekstNaElipsi, 5);
+
+                Grid.SetRow(tekstNaElipsi, poljeNaKojeSePremesta.brojReda + 1);
+                Grid.SetColumn(tekstNaElipsi, SlovoUBroj.vrednostKolonePrekoSlova[poljeNaKojeSePremesta.slovoKolone] + 1);
+                //grid.Children.Add(tekstNaElipsi);
+
+
+                //***************************
+
                 poljeNaKojeSePremesta.figuraNaPolju = poljeElipse.figuraNaPolju; //dodela figure novom polju
                 poljeElipse.figuraNaPolju = null; //ovde vise nema figure
-                
+                poljeElipse.brojReda = poljeNaKojeSePremesta.brojReda;
+                poljeElipse.slovoKolone = poljeNaKojeSePremesta.slovoKolone;
+
             } else
             {
                 MessageBox.Show("Najpre odaberite koju figuru zelite da pomerite, a potom kliknite polje gde zelite da pomerite figuru");
