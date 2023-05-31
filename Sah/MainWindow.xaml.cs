@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using Sah.Klase;
 using Sah.Helper;
 using static System.Net.Mime.MediaTypeNames;
+using System.Data.Common;
 
 namespace Sah
 {
@@ -55,7 +56,8 @@ namespace Sah
             kreirajGridIPolja();
             prikaziTabluTekstualno();
 
-
+            //ukloniElipsuIzGrida(grid, 3, 7);
+            //ukloniNatpisElipseIzGrida(grid, 3, 7);
 
             ////polje3.figuraNaPolju = null;
 
@@ -214,6 +216,9 @@ namespace Sah
             tabla.matricaPolja[figura.Polje.brojReda, SlovoUBroj.vrednostKolonePrekoSlova[figura.Polje.slovoKolone]] = figura.Polje;
             tabla.matricaPolja[figura.Polje.brojReda, SlovoUBroj.vrednostKolonePrekoSlova[figura.Polje.slovoKolone]].figuraNaPolju = figura;
 
+            //nadji rect i apdejtuj njegov tag <3
+            Rectangle rect = nadjiRectangle(grid, figura.Polje.brojReda +1, SlovoUBroj.vrednostKolonePrekoSlova[figura.Polje.slovoKolone] +1);
+            rect.Tag = tabla.matricaPolja[figura.Polje.brojReda, SlovoUBroj.vrednostKolonePrekoSlova[figura.Polje.slovoKolone]];
         }
 
         private TextBlock nadjiTextBlock(Grid grid, int row, int column)
@@ -223,6 +228,19 @@ namespace Sah
                 if (child is TextBlock textBlock && Grid.GetRow(textBlock) == row && Grid.GetColumn(textBlock) == column)
                 {
                     return textBlock;
+                }
+            }
+
+            return null;
+        }
+
+        private Rectangle nadjiRectangle(Grid grid, int row, int column)
+        {
+            foreach (var child in grid.Children)
+            {
+                if (child is Rectangle rect && Grid.GetRow(rect) == row && Grid.GetColumn(rect) == column)
+                {
+                    return rect;
                 }
             }
 
@@ -240,7 +258,16 @@ namespace Sah
             Rectangle rectPolje = (Rectangle)sender;
             Polje poljeNaKojeSePremesta= rectPolje.Tag as Polje;
 
-            if(selektovanaElipsa != null) {
+            if(selektovanaElipsa != null && poljeNaKojeSePremesta.figuraNaPolju == null )
+            {
+                if (poljeNaKojeSePremesta.figuraNaPolju != null)
+                {
+                    MessageBox.Show("Premestam se na polje koje nije null");
+                }
+                else
+                {
+                    MessageBox.Show("Premestam se na polje koje je null");
+                }
                 Polje poljeElipse = selektovanaElipsa.Tag as Polje;
                 TextBlock tekstNaElipsi = nadjiTextBlock(grid, poljeElipse.brojReda + 1, SlovoUBroj.vrednostKolonePrekoSlova[poljeElipse.slovoKolone] + 1);
 
@@ -264,11 +291,94 @@ namespace Sah
                 poljeElipse.figuraNaPolju = null; //uklanjanje figure sa starog polja
                 selektovanaElipsa.Tag = poljeNaKojeSePremesta;
                 prikaziTabluTekstualno();
+            } else if(selektovanaElipsa != null && poljeNaKojeSePremesta.figuraNaPolju != null)
+            {
+                if (poljeNaKojeSePremesta.figuraNaPolju != null)
+                {
+                    MessageBox.Show("Premestam se na polje koje nije null DRuGI IF ");
+                }
+                else
+                {
+                    MessageBox.Show("Premestam se na polje koje je null DRUGI IF");
+                }
+                Polje poljeElipse = selektovanaElipsa.Tag as Polje;
+                TextBlock tekstNaElipsi = nadjiTextBlock(grid, poljeElipse.brojReda + 1, SlovoUBroj.vrednostKolonePrekoSlova[poljeElipse.slovoKolone] + 1);
+
+                //uklanjanje figure sa starog mesta - update matricePolja
+                tabla.matricaPolja[poljeElipse.brojReda, SlovoUBroj.vrednostKolonePrekoSlova[poljeElipse.slovoKolone]] = null;
+
+                //uklanjam postojecu figuru  na polju gde se premestam - update matricePolja
+                tabla.matricaPolja[poljeNaKojeSePremesta.brojReda, SlovoUBroj.vrednostKolonePrekoSlova[poljeNaKojeSePremesta.slovoKolone]].figuraNaPolju = null;
+
+                ukloniElipsuIzGrida(grid, poljeNaKojeSePremesta.brojReda + 1, SlovoUBroj.vrednostKolonePrekoSlova[poljeNaKojeSePremesta.slovoKolone] + 1);
+                ukloniNatpisElipseIzGrida(grid, poljeNaKojeSePremesta.brojReda + 1, SlovoUBroj.vrednostKolonePrekoSlova[poljeNaKojeSePremesta.slovoKolone] + 1);
+
+                //premestanje elipse
+                Grid.SetRow(selektovanaElipsa, poljeNaKojeSePremesta.brojReda + 1);
+                Grid.SetColumn(selektovanaElipsa, SlovoUBroj.vrednostKolonePrekoSlova[poljeNaKojeSePremesta.slovoKolone] + 1);
+
+                //premestanje oznake elipse
+                Grid.SetRow(tekstNaElipsi, poljeNaKojeSePremesta.brojReda + 1);
+                Grid.SetColumn(tekstNaElipsi, SlovoUBroj.vrednostKolonePrekoSlova[poljeNaKojeSePremesta.slovoKolone] + 1);
+
+                //dodavanje figure na novo mesto - update matricePolja
+                tabla.matricaPolja[poljeNaKojeSePremesta.brojReda, SlovoUBroj.vrednostKolonePrekoSlova[poljeNaKojeSePremesta.slovoKolone]] = poljeNaKojeSePremesta;
+                tabla.matricaPolja[poljeNaKojeSePremesta.brojReda, SlovoUBroj.vrednostKolonePrekoSlova[poljeNaKojeSePremesta.slovoKolone]].figuraNaPolju = poljeElipse.figuraNaPolju;
+
+                poljeNaKojeSePremesta.figuraNaPolju = poljeElipse.figuraNaPolju; //eksplicitna dodela figure novom polju
+                poljeElipse.figuraNaPolju = null; //uklanjanje figure sa starog polja
+                selektovanaElipsa.Tag = poljeNaKojeSePremesta;
+
+
+                prikaziTabluTekstualno();
             } else
             {
                 MessageBox.Show("Najpre odaberite koju figuru zelite da pomerite, a potom kliknite polje gde zelite da pomerite figuru");
             }
             selektovanaElipsa = null;
+        }
+
+        public void ukloniElipsuIzGrida(Grid grid, int row, int column)
+        {
+            UIElement elementToRemove = null;
+            foreach (UIElement child in grid.Children)
+            {
+                if(child is Ellipse)
+                {
+                    if (Grid.GetRow(child) == row && Grid.GetColumn(child) == column)
+                    {
+                        elementToRemove = child;
+                        break;
+                    }
+                }
+            }
+
+            if (elementToRemove != null)
+            {
+                grid.Children.Remove(elementToRemove);
+                MessageBox.Show("Uklonio sam");
+            }
+        }
+
+        public void ukloniNatpisElipseIzGrida(Grid grid, int row, int column)
+        {
+            UIElement elementToRemove = null;
+            foreach (UIElement child in grid.Children)
+            {
+                if (child is TextBlock)
+                {
+                    if (Grid.GetRow(child) == row && Grid.GetColumn(child) == column)
+                    {
+                        elementToRemove = child;
+                        break;
+                    }
+                }
+            }
+
+            if (elementToRemove != null)
+            {
+                grid.Children.Remove(elementToRemove);
+            }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
