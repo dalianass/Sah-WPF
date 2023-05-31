@@ -11,7 +11,7 @@ namespace Sah.Klase
 {
     public class SahovskaTabla
     {
-        public Polje[,] matricaPolja;
+        public Polje[,]? matricaPolja;
 
         public SahovskaTabla()
         {
@@ -56,7 +56,7 @@ namespace Sah.Klase
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    if (matricaPolja[i, j] == null) //ako je je polje null, tj samo napravljeno
+                    if (matricaPolja[i, j] == null) //ako je je polje null, tj samo alocirano
                     {
                         matricaTekstualnihOznaka[i, j] =  "_";
                     } else if ( matricaPolja[i, j]!= null && matricaPolja[i, j].figuraNaPolju == null) //ako polje postoji, ali nema figuru (slucaj uklonjena figura)
