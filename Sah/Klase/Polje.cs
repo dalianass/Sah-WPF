@@ -23,15 +23,6 @@ namespace Sah.Klase
 
         }
 
-        //public void dodajFiguruNaPolje(Figura figura) {
-        //    this.figuraNaPolju = figura;
-        //}
-
-        //public void ukloniFiguruSaPolja()
-        //{
-        //    this.figuraNaPolju = null;
-        //}
-
         public bool uIstomRedu(Polje polje)
         {
             if (brojReda == polje.brojReda) return true;
@@ -50,12 +41,12 @@ namespace Sah.Klase
             {
                 if (Math.Abs(SlovoUBroj.vrednostKolonePrekoSlova[polje.slovoKolone] - SlovoUBroj.vrednostKolonePrekoSlova[slovoKolone]) == Math.Abs(polje.brojReda - brojReda)) //ako je razlika rastojanja izmedju redova i kolona ista, u dijagonali su
                 {
-                    MessageBox.Show("Jesu u dijagonali");
                     return true;
                 }
                 else
                 {
-                    MessageBox.Show("Nisu u dijagonali");
+                    MessageBox.Show("Nisu u dijagonali, ne mozete se pomeriti na to polje.");
+                    //MessageBox.Show("Polje sa kog polazim je" + this.slovoKolone + this.brojReda + " a polje gde idem je" + polje.brojReda + polje.slovoKolone);
                     return false;
                 }
             }

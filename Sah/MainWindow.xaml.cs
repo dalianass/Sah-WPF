@@ -27,9 +27,11 @@ namespace Sah
         Polje polje;
         Polje polje2;
         Polje polje3;
+        Polje polje4;
         Figura figura;
         Figura figura2;
         Figura figura3;
+        Figura figura4;
         Grid grid;
         Ellipse selektovanaElipsa;
         SahovskaTabla tabla;
@@ -45,22 +47,13 @@ namespace Sah
             polje2 = new Polje(5, "D", "bela");
             figura2 = new Figura("bela", polje2, "D");
 
-
             polje3 = new Polje(6, "E", "bela");
-
             figura3 = new Figura("bela", polje3, "S");
 
-            //tabla.matricaPolja[1, 1] = polje;
-            //tabla.matricaPolja[3, 3] = polje2;
-            //tabla.matricaPolja[3, 4] = polje3;
+            polje4 = new Polje(6, "A", "bela");
+            figura4 = new Figura("crna", polje4, "T");
+
             kreirajGridIPolja();
-            prikaziTabluTekstualno();
-
-            //ukloniElipsuIzGrida(grid, 3, 7);
-            //ukloniNatpisElipseIzGrida(grid, 3, 7);
-
-            ////polje3.figuraNaPolju = null;
-
         }
 
         private void kreirajGridIPolja()
@@ -90,7 +83,7 @@ namespace Sah
                             Tag = tabla.matricaPolja[row-1, col-1]
                         };
 
-                        rectangle.MouseLeftButtonDown += Polje_MouseLeftButtonDown;
+                        rectangle.MouseLeftButtonDown += SpustiFiguruNaKlik;
 
                         //OZNAKE POLJA
                         tb = new TextBox
@@ -113,7 +106,7 @@ namespace Sah
                             Fill = Brushes.Gray,
                             Tag = tabla.matricaPolja[row - 1, col - 1]
                         };
-                        rectangle.MouseDown += Polje_MouseLeftButtonDown;
+                        rectangle.MouseDown += SpustiFiguruNaKlik;
 
                         //OZNAKE POLJA
                         tb = new TextBox
@@ -142,6 +135,8 @@ namespace Sah
 
             dodajFiguruNaGrid(grid, figura);
             dodajFiguruNaGrid(grid, figura2);
+            dodajFiguruNaGrid(grid, figura3);
+            dodajFiguruNaGrid(grid, figura4);
             mainGrid.Children.Add(grid);
         }
 
@@ -253,85 +248,88 @@ namespace Sah
         }
 
         //Polje na koje treba da se stavi figura - handling
-        private void Polje_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void SpustiFiguruNaKlik(object sender, MouseButtonEventArgs e)
         {
             Rectangle rectPolje = (Rectangle)sender;
             Polje poljeNaKojeSePremesta= rectPolje.Tag as Polje;
 
-            if(selektovanaElipsa != null && poljeNaKojeSePremesta.figuraNaPolju == null )
+            if (selektovanaElipsa != null && poljeNaKojeSePremesta.figuraNaPolju == null)
             {
-                if (poljeNaKojeSePremesta.figuraNaPolju != null)
-                {
-                    MessageBox.Show("Premestam se na polje koje nije null");
-                }
-                else
-                {
-                    MessageBox.Show("Premestam se na polje koje je null");
-                }
                 Polje poljeElipse = selektovanaElipsa.Tag as Polje;
-                TextBlock tekstNaElipsi = nadjiTextBlock(grid, poljeElipse.brojReda + 1, SlovoUBroj.vrednostKolonePrekoSlova[poljeElipse.slovoKolone] + 1);
+                if (poljeElipse.figuraNaPolju.mogucePomeranjeNaDatoPolje(poljeNaKojeSePremesta)) {
 
-                //premestanje elipse
-                Grid.SetRow(selektovanaElipsa, poljeNaKojeSePremesta.brojReda + 1);
-                Grid.SetColumn(selektovanaElipsa, SlovoUBroj.vrednostKolonePrekoSlova[poljeNaKojeSePremesta.slovoKolone] + 1);
+                    TextBlock tekstNaElipsi = nadjiTextBlock(grid, poljeElipse.brojReda + 1, SlovoUBroj.vrednostKolonePrekoSlova[poljeElipse.slovoKolone] + 1);
 
-                //premestanje oznake elipse
-                Grid.SetRow(tekstNaElipsi, poljeNaKojeSePremesta.brojReda + 1);
-                Grid.SetColumn(tekstNaElipsi, SlovoUBroj.vrednostKolonePrekoSlova[poljeNaKojeSePremesta.slovoKolone] + 1);
+                    //premestanje elipse
+                    Grid.SetRow(selektovanaElipsa, poljeNaKojeSePremesta.brojReda + 1);
+                    Grid.SetColumn(selektovanaElipsa, SlovoUBroj.vrednostKolonePrekoSlova[poljeNaKojeSePremesta.slovoKolone] + 1);
 
-                //uklanjanje figure sa starog mesta - update matricePolja
-                //tabla.matricaPolja[poljeElipse.brojReda, SlovoUBroj.vrednostKolonePrekoSlova[poljeElipse.slovoKolone]].figuraNaPolju = null;
-                tabla.matricaPolja[poljeElipse.brojReda, SlovoUBroj.vrednostKolonePrekoSlova[poljeElipse.slovoKolone]] = null;
+                    //premestanje oznake elipse
+                    Grid.SetRow(tekstNaElipsi, poljeNaKojeSePremesta.brojReda + 1);
+                    Grid.SetColumn(tekstNaElipsi, SlovoUBroj.vrednostKolonePrekoSlova[poljeNaKojeSePremesta.slovoKolone] + 1);
 
-                //dodavanje figure na novo mesto - update matricePolja
-                tabla.matricaPolja[poljeNaKojeSePremesta.brojReda, SlovoUBroj.vrednostKolonePrekoSlova[poljeNaKojeSePremesta.slovoKolone]] = poljeNaKojeSePremesta;
-                tabla.matricaPolja[poljeNaKojeSePremesta.brojReda, SlovoUBroj.vrednostKolonePrekoSlova[poljeNaKojeSePremesta.slovoKolone]].figuraNaPolju = poljeElipse.figuraNaPolju;
+                    Polje pomocna = selektovanaElipsa.Tag as Polje; 
 
-                poljeNaKojeSePremesta.figuraNaPolju = poljeElipse.figuraNaPolju; //eksplicitna dodela figure novom polju
-                poljeElipse.figuraNaPolju = null; //uklanjanje figure sa starog polja
-                selektovanaElipsa.Tag = poljeNaKojeSePremesta;
-                prikaziTabluTekstualno();
+                    selektovanaElipsa.Tag = poljeNaKojeSePremesta;
+                    poljeNaKojeSePremesta.figuraNaPolju = pomocna.figuraNaPolju;
+                    poljeNaKojeSePremesta.figuraNaPolju.Polje = poljeNaKojeSePremesta;
+
+                    //uklanjanje figure sa starog mesta - update matricePolja
+                    tabla.matricaPolja[poljeElipse.brojReda, SlovoUBroj.vrednostKolonePrekoSlova[poljeElipse.slovoKolone]] = null;
+
+                    //dodavanje figure na novo mesto - update matricePolja
+                    tabla.matricaPolja[poljeNaKojeSePremesta.brojReda, SlovoUBroj.vrednostKolonePrekoSlova[poljeNaKojeSePremesta.slovoKolone]] = poljeNaKojeSePremesta;
+                    tabla.matricaPolja[poljeNaKojeSePremesta.brojReda, SlovoUBroj.vrednostKolonePrekoSlova[poljeNaKojeSePremesta.slovoKolone]].figuraNaPolju = poljeElipse.figuraNaPolju;
+
+                    poljeNaKojeSePremesta.figuraNaPolju = poljeElipse.figuraNaPolju; //eksplicitna dodela figure novom polju
+                    poljeElipse.figuraNaPolju = null; //uklanjanje figure sa starog polja
+                    prikaziTabluTekstualno();
+                }
+                else MessageBox.Show("Ovaj tip figure se ne moze pomeriti na odabrano polje!");
             } else if(selektovanaElipsa != null && poljeNaKojeSePremesta.figuraNaPolju != null)
             {
-                if (poljeNaKojeSePremesta.figuraNaPolju != null)
-                {
-                    MessageBox.Show("Premestam se na polje koje nije null DRuGI IF ");
-                }
-                else
-                {
-                    MessageBox.Show("Premestam se na polje koje je null DRUGI IF");
-                }
                 Polje poljeElipse = selektovanaElipsa.Tag as Polje;
-                TextBlock tekstNaElipsi = nadjiTextBlock(grid, poljeElipse.brojReda + 1, SlovoUBroj.vrednostKolonePrekoSlova[poljeElipse.slovoKolone] + 1);
+                if (poljeElipse.figuraNaPolju.mogucePomeranjeNaDatoPolje(poljeNaKojeSePremesta)) {
 
-                //uklanjanje figure sa starog mesta - update matricePolja
-                tabla.matricaPolja[poljeElipse.brojReda, SlovoUBroj.vrednostKolonePrekoSlova[poljeElipse.slovoKolone]] = null;
+                    TextBlock tekstNaElipsi = nadjiTextBlock(grid, poljeElipse.brojReda + 1, SlovoUBroj.vrednostKolonePrekoSlova[poljeElipse.slovoKolone] + 1);
 
-                //uklanjam postojecu figuru  na polju gde se premestam - update matricePolja
-                tabla.matricaPolja[poljeNaKojeSePremesta.brojReda, SlovoUBroj.vrednostKolonePrekoSlova[poljeNaKojeSePremesta.slovoKolone]].figuraNaPolju = null;
+                    //uklanjanje figure sa starog mesta - update matricePolja
+                    tabla.matricaPolja[poljeElipse.brojReda, SlovoUBroj.vrednostKolonePrekoSlova[poljeElipse.slovoKolone]] = null;
 
-                ukloniElipsuIzGrida(grid, poljeNaKojeSePremesta.brojReda + 1, SlovoUBroj.vrednostKolonePrekoSlova[poljeNaKojeSePremesta.slovoKolone] + 1);
-                ukloniNatpisElipseIzGrida(grid, poljeNaKojeSePremesta.brojReda + 1, SlovoUBroj.vrednostKolonePrekoSlova[poljeNaKojeSePremesta.slovoKolone] + 1);
+                    //uklanjam postojecu figuru  na polju gde se premestam - update matricePolja
+                    tabla.matricaPolja[poljeNaKojeSePremesta.brojReda, SlovoUBroj.vrednostKolonePrekoSlova[poljeNaKojeSePremesta.slovoKolone]].figuraNaPolju = null;
 
-                //premestanje elipse
-                Grid.SetRow(selektovanaElipsa, poljeNaKojeSePremesta.brojReda + 1);
-                Grid.SetColumn(selektovanaElipsa, SlovoUBroj.vrednostKolonePrekoSlova[poljeNaKojeSePremesta.slovoKolone] + 1);
+                    ukloniNatpisElipseIzGrida(grid, poljeNaKojeSePremesta.brojReda + 1, SlovoUBroj.vrednostKolonePrekoSlova[poljeNaKojeSePremesta.slovoKolone] + 1);
+                    ukloniElipsuIzGrida(grid, poljeNaKojeSePremesta.brojReda + 1, SlovoUBroj.vrednostKolonePrekoSlova[poljeNaKojeSePremesta.slovoKolone] + 1);
 
-                //premestanje oznake elipse
-                Grid.SetRow(tekstNaElipsi, poljeNaKojeSePremesta.brojReda + 1);
-                Grid.SetColumn(tekstNaElipsi, SlovoUBroj.vrednostKolonePrekoSlova[poljeNaKojeSePremesta.slovoKolone] + 1);
+                    //premestanje elipse
+                    Grid.SetRow(selektovanaElipsa, poljeNaKojeSePremesta.brojReda + 1);
+                    Grid.SetColumn(selektovanaElipsa, SlovoUBroj.vrednostKolonePrekoSlova[poljeNaKojeSePremesta.slovoKolone] + 1);
 
-                //dodavanje figure na novo mesto - update matricePolja
-                tabla.matricaPolja[poljeNaKojeSePremesta.brojReda, SlovoUBroj.vrednostKolonePrekoSlova[poljeNaKojeSePremesta.slovoKolone]] = poljeNaKojeSePremesta;
-                tabla.matricaPolja[poljeNaKojeSePremesta.brojReda, SlovoUBroj.vrednostKolonePrekoSlova[poljeNaKojeSePremesta.slovoKolone]].figuraNaPolju = poljeElipse.figuraNaPolju;
+                    //premestanje oznake elipse
+                    Grid.SetRow(tekstNaElipsi, poljeNaKojeSePremesta.brojReda + 1);
+                    Grid.SetColumn(tekstNaElipsi, SlovoUBroj.vrednostKolonePrekoSlova[poljeNaKojeSePremesta.slovoKolone] + 1);
 
-                poljeNaKojeSePremesta.figuraNaPolju = poljeElipse.figuraNaPolju; //eksplicitna dodela figure novom polju
-                poljeElipse.figuraNaPolju = null; //uklanjanje figure sa starog polja
-                selektovanaElipsa.Tag = poljeNaKojeSePremesta;
+                    Polje pomocna = selektovanaElipsa.Tag as Polje;
+
+                    selektovanaElipsa.Tag = poljeNaKojeSePremesta;
+                    poljeNaKojeSePremesta.figuraNaPolju = pomocna.figuraNaPolju;
+                    poljeNaKojeSePremesta.figuraNaPolju.Polje = poljeNaKojeSePremesta;
+
+                    selektovanaElipsa.Tag = poljeNaKojeSePremesta;
+                    //dodavanje figure na novo mesto - update matricePolja
+                    tabla.matricaPolja[poljeNaKojeSePremesta.brojReda, SlovoUBroj.vrednostKolonePrekoSlova[poljeNaKojeSePremesta.slovoKolone]] = poljeNaKojeSePremesta;
+                    tabla.matricaPolja[poljeNaKojeSePremesta.brojReda, SlovoUBroj.vrednostKolonePrekoSlova[poljeNaKojeSePremesta.slovoKolone]].figuraNaPolju = poljeElipse.figuraNaPolju;
+
+                    poljeNaKojeSePremesta.figuraNaPolju = poljeElipse.figuraNaPolju; //eksplicitna dodela figure novom polju
+                    poljeElipse.figuraNaPolju = null; //uklanjanje figure sa starog polja
 
 
-                prikaziTabluTekstualno();
-            } else
+
+                    prikaziTabluTekstualno();
+                } else MessageBox.Show("Ovaj tip figure se ne moze pomeriti na odabrano polje.");
+            } 
+            else
             {
                 MessageBox.Show("Najpre odaberite koju figuru zelite da pomerite, a potom kliknite polje gde zelite da pomerite figuru");
             }
@@ -356,7 +354,7 @@ namespace Sah
             if (elementToRemove != null)
             {
                 grid.Children.Remove(elementToRemove);
-                MessageBox.Show("Uklonio sam");
+                MessageBox.Show("Figura izbacena!");
             }
         }
 

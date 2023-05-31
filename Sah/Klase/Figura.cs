@@ -23,74 +23,38 @@ namespace Sah.Klase
             this.Oznaka = oznaka;
             this.Polje.figuraNaPolju = this; //odgovarajucem polju zadajem figuru
         }
-
-        //public bool mogucePomeranjeNaDatoPolje(Polje polje)
-        //{
-        //    if (this.Oznaka == "T") //Top se krece samo vertikalno i horizontalno
-        //    {
-        //        if (this.Polje.slovoKolone == polje.slovoKolone) { MessageBox.Show("MOZE"); return true; }
-        //        if (this.Polje.brojReda == polje.brojReda) { MessageBox.Show("MOZE"); return true; }
-        //        else { MessageBox.Show("NE MOZE"); return false; }
-        //    }
-        //    else if (this.Oznaka == "S") //Skakac se pomera za 2 kolone i 1 red ili za 1 kolonu i 2 reda - rastojanje je u tom slucaju 3
-        //    {
-        //        if (this.Polje.racunajRastojanje(polje) == 3) { MessageBox.Show("MOZE"); return true; } //metoda koja racuna rastojanje
-        //        else { MessageBox.Show("NE MOZE"); return false;}
-        //    }
-        //    ////Kralj je figura koja se može kretati samo jedno polje vertikalno (po koloni), horizontalno (po redu) ili
-        //    ////dijagonalno.Oznaka za kralja je K.Kralja nije moguće pomeriti na polje koje je napadnuto od strane bilo
-        //    ////koje figure druge boje. Figura napada polje ukoliko se može pomeriti na njega.
-        //    else if (this.Oznaka == "K" && !(polje.figuraNaPolju != null && polje.figuraNaPolju.Boja != this.Boja)) //ako je u pitanju kralj i ako na tom polju ne postoji vec neka figura druge boje od kralja
-        //    {
-        //        if (this.Polje.uIstojKoloni(polje) && this.Polje.racunajRastojanje(polje) == 1) { MessageBox.Show("MOZE"); return true; } //moze se pomeriti samo za jedno mesto u koloni
-        //        if (this.Polje.uIstomRedu(polje) && this.Polje.racunajRastojanje(polje) == 1) { MessageBox.Show("MOZE"); return true;} //moze se pomeriti samo za jedno mesto u redu
-        //        if (this.Polje.uDijagonali(polje) && this.Polje.racunajRastojanje(polje) == 1) { MessageBox.Show("MOZE"); return true; } //moze se pomeriti samo za jedno mesto dijagonalno
-        //        else { MessageBox.Show("NE MOZE"); return false; }
-
-        //    }
-        //    else if (this.Oznaka == "D") //Dama se moze kretati proizvoljan broj polja vertikalno (po koloni), horizontalno (po redu) ili dijagonalno. 
-        //    {
-        //        if (this.Polje.uIstojKoloni(polje)) {MessageBox.Show("MOZE"); return true;}
-        //        if (this.Polje.uIstomRedu(polje)) { MessageBox.Show("MOZE"); return true; }
-        //        if (this.Polje.uDijagonali(polje)) { MessageBox.Show("MOZE"); return true; }
-        //        else { MessageBox.Show("NE MOZE"); return false;}
-        //    }
-        //    else { MessageBox.Show("NE MOZE. KRAJ"); return false; }
-        //    }
-
-            public bool mogucePomeranjeNaDatoPolje(Polje polje)
-            {
-            if (this.Oznaka == "T") //Top se krece samo vertikalno i horizontalno
-            {
-                if (this.Polje.slovoKolone == polje.slovoKolone) { return true; }
-                if (this.Polje.brojReda == polje.brojReda) { return true; }
-                else { return false; }
-            }
-            else if (this.Oznaka == "S") //Skakac se pomera za 2 kolone i 1 red ili za 1 kolonu i 2 reda - rastojanje je u tom slucaju 3
-            {
-                if (this.Polje.racunajRastojanje(polje) == 3) { return true; } //metoda koja racuna rastojanje
-                else { return false;}
-            }
-            ////Kralj se krece jedno polje vertikalno (po koloni), horizontalno (po redu) ili
-            ////dijagonalno. Kralja nije moguće pomeriti na polje koje je napadnuto od strane bilo
-            ////koje figure druge boje. Figura napada polje ukoliko se može pomeriti na njega.
-            else if (this.Oznaka == "K" && !(polje.figuraNaPolju != null && polje.figuraNaPolju.Boja != this.Boja)) //ako je u pitanju kralj i ako na tom polju ne postoji vec neka figura druge boje od kralja
-            {
-                if (this.Polje.uIstojKoloni(polje) && this.Polje.racunajRastojanje(polje) == 1) { return true; } //moze se pomeriti samo za jedno mesto u koloni
-                if (this.Polje.uIstomRedu(polje) && this.Polje.racunajRastojanje(polje) == 1) { return true;} //moze se pomeriti samo za jedno mesto u redu
-                if (this.Polje.uDijagonali(polje) && this.Polje.racunajRastojanje(polje) == 1) { return true; } //moze se pomeriti samo za jedno mesto dijagonalno
-                else { return false; }
-
-            }
-            else if (this.Oznaka == "D") //Dama se moze kretati proizvoljan broj polja vertikalno (po koloni), horizontalno (po redu) ili dijagonalno. 
-            {
-                if (this.Polje.uIstojKoloni(polje)) { return true;}
-                if (this.Polje.uIstomRedu(polje)) { return true; }
-                if (this.Polje.uDijagonali(polje)) { return true; }
-                else { return false;}
-            }
+        public bool mogucePomeranjeNaDatoPolje(Polje polje)
+        {
+        if (this.Oznaka == "T") //Top se krece samo vertikalno i horizontalno
+        {
+            if (this.Polje.slovoKolone == polje.slovoKolone) { return true; }
+            if (this.Polje.brojReda == polje.brojReda) { return true; }
             else { return false; }
-            }
+        }
+        else if (this.Oznaka == "S") //Skakac se pomera za 2 kolone i 1 red ili za 1 kolonu i 2 reda - rastojanje je u tom slucaju 3
+        {
+            if (this.Polje.racunajRastojanje(polje) == 3) { return true; } //metoda koja racuna rastojanje
+            else { return false;}
+        }
+            //Kralj se krece jedno polje vertikalno (po koloni), horizontalno (po redu) ili dijagonalno. Kralja nije moguće pomeriti na
+            //polje koje je napadnuto od strane bilo koje figure druge boje. 
+            else if (this.Oznaka == "K" && !(polje.figuraNaPolju != null && polje.figuraNaPolju.Boja != this.Boja)) //ako je u pitanju kralj i ako na tom polju ne postoji vec neka figura druge boje od kralja
+        {
+            if (this.Polje.uIstojKoloni(polje) && this.Polje.racunajRastojanje(polje) == 1) { return true; } //moze se pomeriti samo za jedno mesto u koloni
+            if (this.Polje.uIstomRedu(polje) && this.Polje.racunajRastojanje(polje) == 1) { return true;} //moze se pomeriti samo za jedno mesto u redu
+            if (this.Polje.uDijagonali(polje) && this.Polje.racunajRastojanje(polje) == 1) { return true; } //moze se pomeriti samo za jedno mesto dijagonalno
+            else { return false; }
+
+        }
+        else if (this.Oznaka == "D") //Dama se moze kretati proizvoljan broj polja vertikalno (po koloni), horizontalno (po redu) ili dijagonalno. 
+        {
+            if (this.Polje.uIstojKoloni(polje)) { return true;}
+            if (this.Polje.uIstomRedu(polje)) { return true; }
+            if (this.Polje.uDijagonali(polje)) { return true; }
+            else { return false;}
+        }
+        else { return false; }
+        }
 
         public string FormatirajOznakuFigure(Figura figura)
         {
